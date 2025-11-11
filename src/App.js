@@ -8,6 +8,11 @@ import MyReservations from "./pages/MyReservations";
 import EditReservation from "./pages/EditReservation";
 
 
+import AdminReservations from "./pages/admin/AdminReservations";
+import AdminMakeReservation from "./pages/admin/AdminMakeReservation";
+
+
+
 function App() {
   return (
     <Router>
@@ -21,6 +26,9 @@ function App() {
           <Route path="/make-reservation" element={<MakeReservation />} />
           <Route path="/edit-reservation/:id" element={<EditReservation />} />
           <Route path="/my-reservations" element={<MyReservations />} />
+
+          <Route path="/admin-Reservations" element={<AdminReservations />} />
+          <Route path="/admin-make-reservation" element={<AdminMakeReservation />} />
         </Routes>
       </div>
     </Router>

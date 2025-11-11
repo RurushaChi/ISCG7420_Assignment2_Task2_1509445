@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../api";
+import api from "../../api";
 
 const tomorrow = new Date();
 tomorrow.setDate(tomorrow.getDate() + 1);
 const minDate = tomorrow.toISOString().split("T")[0];
 
 
-export default function MakeReservation() {
+
+
+export default function AdminMakeReservation() {
+  const [isAdmin, setIsAdmin] = useState(false);
   const [rooms, setRooms] = useState([]);
+  const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState({
+    user: "",
     room: "",
     date: "",
     start_time: "",
@@ -17,26 +21,27 @@ export default function MakeReservation() {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const navigate = useNavigate();
-
-  const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
     const init = async () => {
       try {
-        // Ensure user is logged in
-        await api.get("/me/");
-      } catch (err) {
-        setError("You must be logged in to make a reservation.");
-        return;
-      }
+        const meRes = await api.get("/me/");
+        if (!meRes.data.is_staff) {
+          setError("Access denied. Admins only.");
+          return;
+        }
+        setIsAdmin(true);
 
-      try {
-        const roomsRes = await api.get("/rooms/");
+        const [roomsRes, usersRes] = await Promise.all([
+          api.get("/rooms/"),
+          api.get("/users/"),
+        ]);
+
         setRooms(roomsRes.data);
+        setUsers(usersRes.data);
       } catch (err) {
-        console.log("ROOMS LOAD ERROR:", err.response?.data || err);
-        setError("Unable to load rooms.");
+        console.log("ADMIN MAKE INIT ERROR:", err.response?.data || err);
+        setError("Unable to load data.");
       }
     };
 
@@ -59,13 +64,14 @@ export default function MakeReservation() {
       await api.post("/reservations/", formData);
       setSuccess("Reservation created successfully!");
       setFormData({
+        user: "",
         room: "",
         date: "",
         start_time: "",
         end_time: "",
       });
     } catch (err) {
-      console.log("USER MAKE ERROR:", err.response?.data || err);
+      console.log("ADMIN MAKE ERROR:", err.response?.data || err);
       if (err.response?.data) {
         setError(JSON.stringify(err.response.data));
       } else {
@@ -74,23 +80,42 @@ export default function MakeReservation() {
     }
   };
 
-  if (error && !success && !rooms.length) {
+  if (!isAdmin) {
     return (
       <div className="container mt-4">
-        <h2>Make Reservation</h2>
-        <p className="text-danger mt-3">{error}</p>
+        <h2>Admin Make Reservation</h2>
+        <p className="text-danger mt-3">{error || "Access denied."}</p>
       </div>
     );
   }
 
   return (
     <div className="container mt-4">
-      <h2>Make Reservation</h2>
+      <h2>Admin Make Reservation</h2>
 
       {error && <div className="alert alert-danger mt-3">{error}</div>}
       {success && <div className="alert alert-success mt-3">{success}</div>}
 
       <form onSubmit={handleSubmit} className="mt-3">
+        {/* User */}
+        <div className="mb-3">
+          <label className="form-label">User</label>
+          <select
+            name="user"
+            className="form-select"
+            value={formData.user}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select a user</option>
+            {users.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.username} ({u.email})
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Room */}
         <div className="mb-3">
           <label className="form-label">Room</label>
@@ -114,19 +139,18 @@ export default function MakeReservation() {
         <div className="mb-3">
           <label className="form-label">Date</label>
           <input
-              type="date"
-              name="date"
-              className="form-control"
-              value={formData.date}
-              onChange={handleChange}
-              required
-              min={minDate}
+            type="date"
+            name="date"
+            className="form-control"
+            value={formData.date}
+            onChange={handleChange}
+            required
+            min={minDate}
           />
-
 
         </div>
 
-        {/* Start Time */}
+        {/* Times */}
         <div className="mb-3">
           <label className="form-label">Start Time</label>
           <input
@@ -139,7 +163,6 @@ export default function MakeReservation() {
           />
         </div>
 
-        {/* End Time */}
         <div className="mb-3">
           <label className="form-label">End Time</label>
           <input
@@ -153,7 +176,7 @@ export default function MakeReservation() {
         </div>
 
         <button type="submit" className="btn btn-success">
-          Make Reservation
+          Create Reservation
         </button>
       </form>
     </div>

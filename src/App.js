@@ -3,7 +3,10 @@ import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import RoomsList from "./pages/RoomsList";
+import MakeReservation from "./pages/MakeReservation";
 import MyReservations from "./pages/MyReservations";
+import EditReservation from "./pages/EditReservation";
+
 
 function App() {
   return (
@@ -15,6 +18,8 @@ function App() {
           <Route path="/rooms" element={<RoomsList />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/make-reservation" element={<MakeReservation />} />
+          <Route path="/edit-reservation/:id" element={<EditReservation />} />
           <Route path="/my-reservations" element={<MyReservations />} />
         </Routes>
       </div>

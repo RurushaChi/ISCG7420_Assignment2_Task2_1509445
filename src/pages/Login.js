@@ -19,15 +19,29 @@ export default function Login() {
     setError("");
 
     try {
+      // 🔹 Call Django JWT token endpoint
       const res = await api.post("/token/", {
         username: formData.username,
         password: formData.password,
       });
+
+      // 🔹 Save tokens
       localStorage.setItem("access", res.data.access);
       localStorage.setItem("refresh", res.data.refresh);
+
+      // 🔹 Notify Navbar and any other components that login occurred
+      window.dispatchEvent(new Event("auth-changed"));
+
+      // 🔹 Redirect to the rooms page
       navigate("/rooms");
     } catch (err) {
-      setError("Invalid username or password");
+      console.log("LOGIN ERROR:", err.response?.data || err);
+      const data = err.response?.data;
+      if (data?.detail) {
+        setError(data.detail);
+      } else {
+        setError("Invalid username or password");
+      }
     }
   };
 
@@ -63,8 +77,10 @@ export default function Login() {
                 required
               />
             </div>
-            {error && <p className="text-danger">{error}</p>}
-            <div className="text-center">
+
+            {error && <p className="text-danger text-center">{error}</p>}
+
+            <div className="text-center mt-3">
               <button type="submit" className="btn btn-primary px-4">
                 Login
               </button>
@@ -72,7 +88,7 @@ export default function Login() {
           </form>
 
           <p className="text-center mt-3 mb-0">
-            Don&apos;t have an account?{" "}
+            Don’t have an account?{" "}
             <Link to="/signup" className="text-decoration-none fw-semibold">
               Sign up here
             </Link>

@@ -6,8 +6,8 @@ export default function Navbar() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // Load current user if token exists
-  useEffect(() => {
+  // Helper: load current user from /api/me/
+  const loadUser = () => {
     const token = localStorage.getItem("access");
     if (!token) {
       setUser(null);
@@ -16,33 +16,55 @@ export default function Navbar() {
 
     api
       .get("/me/")
-      .then((res) => setUser(res.data))
+      .then((res) => {
+        setUser(res.data);
+      })
       .catch(() => {
-        // invalid token
+        // token invalid/expired
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
         setUser(null);
       });
+  };
+
+  useEffect(() => {
+    // Initial load on mount
+    loadUser();
+
+    // Listen for auth changes (login/logout)
+    const handleAuthChange = () => {
+      loadUser();
+    };
+
+    window.addEventListener("auth-changed", handleAuthChange);
+    window.addEventListener("storage", handleAuthChange); // in case we use storage events
+
+    return () => {
+      window.removeEventListener("auth-changed", handleAuthChange);
+      window.removeEventListener("storage", handleAuthChange);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
     setUser(null);
+    // notify rest of app
+    window.dispatchEvent(new Event("auth-changed"));
     navigate("/login");
   };
 
+  const isLoggedIn = !!user;
   const isAdmin = user?.is_staff;
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
-        {/* Brand */}
-        <Link className="navbar-brand" to="/">
+        <Link className="navbar-brand" to="/rooms">
           Te Whare Rūnanga
         </Link>
 
-        {/* Toggler */}
         <button
           className="navbar-toggler"
           type="button"
@@ -52,10 +74,8 @@ export default function Navbar() {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        {/* Links */}
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
-
             {/* View Rooms - always visible */}
             <li className="nav-item">
               <Link className="nav-link" to="/rooms">
@@ -63,10 +83,10 @@ export default function Navbar() {
               </Link>
             </li>
 
-            {user ? (
+            {isLoggedIn ? (
               <>
                 {isAdmin ? (
-                  // Admin Manage dropdown
+                  // Admin menu like your Django base.html
                   <li className="nav-item dropdown">
                     <button
                       className="nav-link dropdown-toggle btn btn-link"
@@ -75,14 +95,20 @@ export default function Navbar() {
                     >
                       Manage
                     </button>
-                    <ul className="dropdown-menu" aria-labelledby="manageDropdown">
+                    <ul
+                      className="dropdown-menu"
+                      aria-labelledby="manageDropdown"
+                    >
                       <li>
                         <Link className="dropdown-item" to="/admin/rooms">
                           Rooms
                         </Link>
                       </li>
                       <li>
-                        <Link className="dropdown-item" to="/admin/reservations">
+                        <Link
+                          className="dropdown-item"
+                          to="/admin/reservations"
+                        >
                           Reservations
                         </Link>
                       </li>
@@ -94,8 +120,8 @@ export default function Navbar() {
                     </ul>
                   </li>
                 ) : (
+                  // Regular user options
                   <>
-                    {/* Regular user */}
                     <li className="nav-item">
                       <Link className="nav-link" to="/make-reservation">
                         Make Reservation
@@ -109,7 +135,7 @@ export default function Navbar() {
                   </>
                 )}
 
-                {/* User dropdown */}
+                {/* Welcome + Logout */}
                 <li className="nav-item dropdown">
                   <button
                     className="nav-link dropdown-toggle btn btn-link"
@@ -131,7 +157,10 @@ export default function Navbar() {
                       <hr className="dropdown-divider" />
                     </li>
                     <li>
-                      <button className="dropdown-item" onClick={handleLogout}>
+                      <button
+                        className="dropdown-item"
+                        onClick={handleLogout}
+                      >
                         Logout
                       </button>
                     </li>
@@ -153,7 +182,6 @@ export default function Navbar() {
                 </li>
               </>
             )}
-
           </ul>
         </div>
       </div>

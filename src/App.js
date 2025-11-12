@@ -16,7 +16,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminUserForm from "./pages/admin/AdminUserForm";
 
 
-
+import Home from "./pages/Home";
 
 function App() {
   return (
@@ -25,7 +25,7 @@ function App() {
       <div className="container mt-4">
         <Routes>
           {/* Public */}
-          <Route path="/" element={<RoomsList />} />
+          <Route path="/" element={<Home />} />
           <Route path="/rooms" element={<RoomsList />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />

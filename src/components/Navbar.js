@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
+import { Dropdown } from "bootstrap"; // ⬅ add this
 
 export default function Navbar() {
   const [user, setUser] = useState(null);
@@ -56,10 +57,9 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
-        <Link className="navbar-brand" to="/rooms">
+        <Link className="navbar-brand" to="/">
           Te Whare Rūnanga
         </Link>
-
         <button
           className="navbar-toggler"
           type="button"
@@ -87,7 +87,7 @@ export default function Navbar() {
                   // Admin menu
                   <li className="nav-item dropdown">
                     <button
-                      className="nav-link dropdown-toggle btn btn-link"
+                      className="nav-link dropdown-toggle"
                       id="manageDropdown"
                       type="button"
                       data-bs-toggle="dropdown"
@@ -95,36 +95,22 @@ export default function Navbar() {
                     >
                       Manage
                     </button>
-                    <ul className="dropdown-menu"  aria-labelledby="manageDropdown">
+                    <ul className="dropdown-menu" aria-labelledby="manageDropdown">
                       <li>
-                        <Link className="dropdown-item" to="/admin/rooms">
-                          Rooms
-                        </Link>
+                        <Link className="dropdown-item" to="/admin/rooms">Rooms</Link>
                       </li>
                       <li>
-                        <Link
-                          className="dropdown-item"
-                          to="/admin-Reservations"
-                        >
-                          Reservations
-                        </Link>
-                      </li>
-
-                      <li>
-                        <Link
-                          className="dropdown-item"
-                          to="/admin-make-reservation"
-                        >
-                          Add Reservation
-                        </Link>
+                        <Link className="dropdown-item" to="/admin-Reservations">Reservations</Link>
                       </li>
                       <li>
-                        <Link className="dropdown-item" to="/admin/users">
-                          Users
-                        </Link>
+                        <Link className="dropdown-item" to="/admin-make-reservation">Add Reservation</Link>
+                      </li>
+                      <li>
+                        <Link className="dropdown-item" to="/admin/users">Users</Link>
                       </li>
                     </ul>
                   </li>
+
                 ) : (
                   // Regular user menu
                   <>
@@ -144,7 +130,7 @@ export default function Navbar() {
                 {/* User dropdown */}
                 <li className="nav-item dropdown">
                   <button
-                    className="nav-link dropdown-toggle btn btn-link"
+                    className="nav-link dropdown-toggle"
                     id="userDropdown"
                     type="button"
                     data-bs-toggle="dropdown"
@@ -152,26 +138,10 @@ export default function Navbar() {
                   >
                     Welcome, {user.username}
                   </button>
-                  <ul
-                    className="dropdown-menu dropdown-menu-end"
-                    aria-labelledby="userDropdown"
-                  >
-                    <li>
-                      <button className="dropdown-item" disabled>
-                        Profile (coming soon)
-                      </button>
-                    </li>
-                    <li>
-                      <hr className="dropdown-divider" />
-                    </li>
-                    <li>
-                      <button
-                        className="dropdown-item"
-                        onClick={handleLogout}
-                      >
-                        Logout
-                      </button>
-                    </li>
+                  <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><button className="dropdown-item" disabled>Profile (coming soon)</button></li>
+                    <li><hr className="dropdown-divider" /></li>
+                    <li><button className="dropdown-item" onClick={handleLogout}>Logout</button></li>
                   </ul>
                 </li>
               </>

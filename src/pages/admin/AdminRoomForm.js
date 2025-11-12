@@ -15,6 +15,7 @@ export default function AdminRoomForm() {
     facilities: "",
     room_type: "Conference",
     imagePath: "",
+    react_image_paths: "", // already present in your state ✅
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -41,6 +42,7 @@ export default function AdminRoomForm() {
             facilities: res.data.facilities || "",
             room_type: res.data.room_type,
             imagePath: res.data.imagePath || "",
+            react_image_paths: res.data.react_image_paths || "", // populate ✅
           });
         }
       } catch (err) {
@@ -67,9 +69,16 @@ export default function AdminRoomForm() {
     setError("");
     setSaving(true);
 
+    // Optional: guard against CharField length (255)
+    if ((formData.react_image_paths || "").length > 255) {
+      setSaving(false);
+      setError("React Image Paths must be 255 characters or less.");
+      return;
+    }
+
     try {
       if (isEdit) {
-        await api.put(`/rooms/${id}/`, formData);
+        await api.put(`/rooms/${id}/`, formData); // includes react_image_paths ✅
       } else {
         await api.post("/rooms/", formData);
       }
@@ -103,6 +112,12 @@ export default function AdminRoomForm() {
       </div>
     );
   }
+
+  // For preview thumbnails
+  const previewImages = (formData.react_image_paths || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
 
   return (
     <div className="container mt-4">
@@ -178,7 +193,7 @@ export default function AdminRoomForm() {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Image Path (optional)</label>
+          <label className="form-label">Django Image Paths</label>
           <input
             type="text"
             name="imagePath"
@@ -189,6 +204,19 @@ export default function AdminRoomForm() {
           />
         </div>
 
+        {/* NEW: React Image Paths (comma-separated) */}
+        <div className="mb-3">
+          <label className="form-label">React Image Paths</label>
+          <input
+            type="text"
+            name="react_image_paths"
+            className="form-control"
+            value={formData.react_image_paths}
+            onChange={handleChange}
+            placeholder="/images/rooms/tahi_A.jpg, https://cdn.example.com/room2.jpg"
+            maxLength={255}
+          />
+        </div>
         <button type="submit" className="btn btn-success" disabled={saving}>
           {saving ? "Saving..." : isEdit ? "Save Changes" : "Create Room"}
         </button>

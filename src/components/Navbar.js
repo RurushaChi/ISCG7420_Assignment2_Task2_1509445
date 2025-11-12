@@ -95,19 +95,12 @@ export default function Navbar() {
                     >
                       Manage
                     </button>
-                    <ul
-                      className="dropdown-menu"
-                      aria-labelledby="manageDropdown"
-                    >
-                      {/* Uncomment if/when you implement these pages */}
-                      {/*
+                    <ul className="dropdown-menu"  aria-labelledby="manageDropdown">
                       <li>
                         <Link className="dropdown-item" to="/admin/rooms">
                           Rooms
                         </Link>
                       </li>
-                      */}
-
                       <li>
                         <Link
                           className="dropdown-item"
@@ -125,14 +118,11 @@ export default function Navbar() {
                           Add Reservation
                         </Link>
                       </li>
-
-                      {/*
                       <li>
                         <Link className="dropdown-item" to="/admin/users">
                           Users
                         </Link>
                       </li>
-                      */}
                     </ul>
                   </li>
                 ) : (

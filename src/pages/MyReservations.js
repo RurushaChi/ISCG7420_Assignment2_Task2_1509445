@@ -116,15 +116,13 @@ export default function MyReservations() {
                     {r.status !== "Cancelled" && (
                       <>
                         <button
-                          className="btn btn-sm btn-outline-primary me-2"
-                          onClick={() =>
-                            navigate(`/edit-reservation/${r.booking_id}`)
-                          }
+                          className="btn btn-sm btn-primary me-2"
+                          onClick={() => navigate(`/edit-reservation/${r.booking_id}`)}
                         >
                           Edit
                         </button>
                         <button
-                          className="btn btn-sm btn-outline-danger"
+                          className="btn btn-sm btn-danger"
                           onClick={() => cancelReservation(r.booking_id)}
                         >
                           Cancel

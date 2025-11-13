@@ -33,8 +33,8 @@ function App() {
           <Route path="/edit-reservation/:id" element={<EditReservation />} />
           <Route path="/my-reservations" element={<MyReservations />} />
           {/* Admin - Reservations */}
-          <Route path="/admin/reservations" element={<AdminReservations />} />
-          <Route path="/admin/reservations/new" element={<AdminMakeReservation />} />
+          <Route path="/admin/admin-Reservations" element={<AdminReservations />} />
+          <Route path="/admin/admin-Reservations/new" element={<AdminMakeReservation />} />
           {/* Admin - Rooms */}
           <Route path="/admin/rooms" element={<AdminRooms />} />
           <Route path="/admin/rooms/new" element={<AdminRoomForm />} />

@@ -103,9 +103,6 @@ export default function Navbar() {
                         <Link className="dropdown-item" to="/admin-Reservations">Reservations</Link>
                       </li>
                       <li>
-                        <Link className="dropdown-item" to="/admin-make-reservation">Add Reservation</Link>
-                      </li>
-                      <li>
                         <Link className="dropdown-item" to="/admin/users">Users</Link>
                       </li>
                     </ul>

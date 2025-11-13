@@ -54,22 +54,13 @@ export default function AdminReservations() {
   };
 
   if (loading) {
-    return (
-      <div className="container mt-4">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h2 className="mb-0">Reservations</h2>
-          <button
-            className="btn btn-primary"
-            onClick={() => navigate("/admin/reservations/new")}
-            disabled
-          >
-            + Add Reservation
-          </button>
-        </div>
-        <p>Loading...</p>
-      </div>
-    );
-  }
+  return (
+    <div className="container mt-4">
+      <h2>Manage Reservations</h2>
+      <p>Loading...</p>
+    </div>
+  );
+}
 
   if (!isAdmin) {
     return (
@@ -81,7 +72,9 @@ export default function AdminReservations() {
   }
 
   return (
+
     <div className="container mt-4">
+      {/* Toolbar with Add button */}
       <h2>Manage Reservations</h2>
 
       <div className="mb-3">

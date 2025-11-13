@@ -100,7 +100,7 @@ export default function Navbar() {
                         <Link className="dropdown-item" to="/admin/rooms">Rooms</Link>
                       </li>
                       <li>
-                        <Link className="dropdown-item" to="/admin-Reservations">Reservations</Link>
+                        <Link className="dropdown-item" to="/admin/reservations">Reservations</Link>
                       </li>
                       <li>
                         <Link className="dropdown-item" to="/admin/users">Users</Link>

@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../../api";
 
 const tomorrow = new Date();
 tomorrow.setDate(tomorrow.getDate() + 1);
 const minDate = tomorrow.toISOString().split("T")[0];
-
-
-
 
 export default function AdminMakeReservation() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -21,6 +19,7 @@ export default function AdminMakeReservation() {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const init = async () => {
@@ -62,14 +61,9 @@ export default function AdminMakeReservation() {
 
     try {
       await api.post("/reservations/", formData);
+      // Optional: brief success then navigate
       setSuccess("Reservation created successfully!");
-      setFormData({
-        user: "",
-        room: "",
-        date: "",
-        start_time: "",
-        end_time: "",
-      });
+      setTimeout(() => navigate("/admin/reservations"), 600);
     } catch (err) {
       console.log("ADMIN MAKE ERROR:", err.response?.data || err);
       if (err.response?.data) {
@@ -91,7 +85,15 @@ export default function AdminMakeReservation() {
 
   return (
     <div className="container mt-4">
-      <h2>Admin Make Reservation</h2>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2 className="mb-0">Admin Make Reservation</h2>
+        <button
+          className="btn btn-outline-secondary"
+          onClick={() => navigate("/admin/reservations")}
+        >
+          Back to Reservations
+        </button>
+      </div>
 
       {error && <div className="alert alert-danger mt-3">{error}</div>}
       {success && <div className="alert alert-success mt-3">{success}</div>}
@@ -145,9 +147,8 @@ export default function AdminMakeReservation() {
             value={formData.date}
             onChange={handleChange}
             required
-            min={minDate}
+            min={minDate}     // block today & past
           />
-
         </div>
 
         {/* Times */}

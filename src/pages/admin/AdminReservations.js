@@ -56,7 +56,16 @@ export default function AdminReservations() {
   if (loading) {
     return (
       <div className="container mt-4">
-        <h2>Manage Reservations</h2>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h2 className="mb-0">Reservations</h2>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate("/admin/reservations/new")}
+            disabled
+          >
+            + Add Reservation
+          </button>
+        </div>
         <p>Loading...</p>
       </div>
     );
@@ -65,7 +74,7 @@ export default function AdminReservations() {
   if (!isAdmin) {
     return (
       <div className="container mt-4">
-        <h2>Manage Reservations</h2>
+        <h2>Reservations</h2>
         <p className="text-danger">{error || "Access denied."}</p>
       </div>
     );
@@ -73,16 +82,34 @@ export default function AdminReservations() {
 
   return (
     <div className="container mt-4">
-      <h2>Manage Reservations</h2>
+      {/* Toolbar with Add button */}
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2 className="mb-0">Reservations</h2>
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate("/admin/reservations/new")}
+        >
+          + Add Reservation
+        </button>
+      </div>
+
+      {error && <div className="alert alert-danger">{error}</div>}
 
       {reservations.length === 0 ? (
-        <p className="mt-3">No reservations found.</p>
+        <div className="text-center p-5 border rounded">
+          <p className="mb-3">No reservations found.</p>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate("/admin/reservations/new")}
+          >
+            + Add Reservation
+          </button>
+        </div>
       ) : (
-        <div className="table-responsive mt-3">
+        <div className="table-responsive">
           <table className="table table-striped align-middle">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Room</th>
                 <th>User</th>
                 <th>Date</th>
@@ -95,9 +122,8 @@ export default function AdminReservations() {
             <tbody>
               {reservations.map((r) => (
                 <tr key={r.booking_id}>
-                  <td>{r.booking_id}</td>
                   <td>{r.room_name || r.room}</td>
-                  <td>{r.username || r.user}</td>
+                  <td>{r.user_username || r.user}</td>
                   <td>{r.date}</td>
                   <td>{r.start_time}</td>
                   <td>{r.end_time}</td>
@@ -105,17 +131,20 @@ export default function AdminReservations() {
                   <td className="text-end">
                     <button
                       className="btn btn-sm btn-primary me-2"
-                      onClick={() => navigate(`/edit-reservation/${r.booking_id}`)}
+                      onClick={() =>
+                        navigate(`/admin/reservations/${r.booking_id}/edit`)
+                      }
                     >
                       Edit
                     </button>
-
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => cancelReservation(r.booking_id)}
-                    >
-                      Cancel
-                    </button>
+                    {r.status !== "Cancelled" && (
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => cancelReservation(r.booking_id)}
+                      >
+                        Cancel
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -126,3 +155,4 @@ export default function AdminReservations() {
     </div>
   );
 }
+

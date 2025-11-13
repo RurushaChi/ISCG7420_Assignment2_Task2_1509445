@@ -82,14 +82,14 @@ export default function AdminReservations() {
 
   return (
     <div className="container mt-4">
-      {/* Toolbar with Add button */}
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="mb-0">Reservations</h2>
+      <h2>Manage Reservations</h2>
+
+      <div className="mb-3">
         <button
-          className="btn btn-primary"
+          className="btn btn-success"
           onClick={() => navigate("/admin/reservations/new")}
         >
-          + Add Reservation
+          Add Reservation
         </button>
       </div>
 
